@@ -52,6 +52,7 @@ func main() {
 	finnhubClient := finnhub.NewAPIClient(cfg)
 
 	router := gin.Default()
+	router.Use(CORSMiddleware())
 
 	router.GET("/stocks", func(c *gin.Context) {
 		res := getAllStocks(finnhubClient)
@@ -95,9 +96,26 @@ func main() {
 	}
 }
 
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Header("Access-Control-Allow-Methods", "POST,HEAD,PATCH, OPTIONS, GET, PUT")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
+
 func getAllStocks(finnhub *finnhub.APIClient) APIAllStocksResponse {
 
-	res, _, err := finnhub.DefaultApi.StockSymbols(context.Background()).Mic("XNAS").Exchange("US").Execute()
+	res, _, err := finnhub.DefaultApi.StockSymbols(context.Background()).Mic("XNAS").SecurityType("Common Stock").Exchange("US").Execute()
 
 	if err != nil {
 		return APIAllStocksResponse{Data: res, Error: Error{msg: err.Error(), code: "500"}}
