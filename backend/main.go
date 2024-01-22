@@ -27,13 +27,28 @@ type APISingleStockResponse struct {
 	Error Error                `json:"error"`
 }
 
+type APISingleStockQuoteResponse struct {
+	Data  finnhub.Quote `json:"data"`
+	Error Error         `json:"error"`
+}
+
 type APIStockNewsResponse struct {
 	Data  []finnhub.CompanyNews `json:"data"`
 	Error Error                 `json:"error"`
 }
 
+type APIMarketNewsResponse struct {
+	Data  []finnhub.MarketNews `json:"data"`
+	Error Error                `json:"error"`
+}
+
 type APICompanyDataResponse struct {
 	Data  finnhub.BasicFinancials `json:"data"`
+	Error Error                   `json:"error"`
+}
+
+type APICompanyProfileResponse struct {
+	Data  finnhub.CompanyProfile2 `json:"data"`
 	Error Error                   `json:"error"`
 }
 
@@ -62,7 +77,25 @@ func main() {
 	router.GET("/stocks/:sign", func(c *gin.Context) {
 		callSign := c.Param("sign")
 		res := getSpecificStock(finnhubClient, callSign)
-		c.IndentedJSON(http.StatusOK, res)
+		var status int
+		if (res.Error != Error{}) {
+			status = http.StatusInternalServerError
+		} else {
+			status = http.StatusOK
+		}
+		c.IndentedJSON(status, res)
+	})
+
+	router.GET("/stocks/:sign/quote", func(c *gin.Context) {
+		callSign := c.Param("sign")
+		res := getSpecificStockQuote(finnhubClient, callSign)
+		var status int
+		if (res.Error != Error{}) {
+			status = http.StatusInternalServerError
+		} else {
+			status = http.StatusOK
+		}
+		c.IndentedJSON(status, res)
 	})
 
 	router.GET("/stocks/:sign/news", func(c *gin.Context) {
@@ -80,6 +113,29 @@ func main() {
 	router.GET("/stocks/:sign/data", func(c *gin.Context) {
 		callSign := c.Param("sign")
 		res := getCompanyData(finnhubClient, callSign)
+		var status int
+		if (res.Error != Error{}) {
+			status = http.StatusInternalServerError
+		} else {
+			status = http.StatusOK
+		}
+		c.IndentedJSON(status, res)
+	})
+
+	router.GET("/stocks/:sign/profile", func(c *gin.Context) {
+		callSign := c.Param("sign")
+		res := getCompanyProfile(finnhubClient, callSign)
+		var status int
+		if (res.Error != Error{}) {
+			status = http.StatusInternalServerError
+		} else {
+			status = http.StatusOK
+		}
+		c.IndentedJSON(status, res)
+	})
+
+	router.GET("/market-news", func(c *gin.Context) {
+		res := getMarketNews(finnhubClient)
 		var status int
 		if (res.Error != Error{}) {
 			status = http.StatusInternalServerError
@@ -133,7 +189,17 @@ func getSpecificStock(finnhub *finnhub.APIClient, callSign string) APISingleStoc
 	}
 
 	return APISingleStockResponse{Data: res, Error: Error{}}
+}
 
+func getSpecificStockQuote(finnhub *finnhub.APIClient, callSign string) APISingleStockQuoteResponse {
+
+	res, _, err := finnhub.DefaultApi.Quote(context.Background()).Symbol(callSign).Execute()
+
+	if err != nil {
+		return APISingleStockQuoteResponse{Data: res, Error: Error{msg: err.Error(), code: "500"}}
+	}
+
+	return APISingleStockQuoteResponse{Data: res, Error: Error{}}
 }
 
 func getStockNews(finnhub *finnhub.APIClient, callSign string) APIStockNewsResponse {
@@ -158,4 +224,25 @@ func getCompanyData(finnhub *finnhub.APIClient, callSign string) APICompanyDataR
 	}
 
 	return APICompanyDataResponse{Data: res, Error: Error{}}
+}
+
+func getCompanyProfile(finnhub *finnhub.APIClient, callSign string) APICompanyProfileResponse {
+	res, _, err := finnhub.DefaultApi.CompanyProfile2(context.Background()).Symbol(callSign).Execute()
+
+	if err != nil {
+		return APICompanyProfileResponse{Data: res, Error: Error{msg: err.Error(), code: "500"}}
+	}
+
+	return APICompanyProfileResponse{Data: res, Error: Error{}}
+}
+
+func getMarketNews(finnhub *finnhub.APIClient) APIMarketNewsResponse {
+
+	res, _, err := finnhub.DefaultApi.MarketNews(context.Background()).Category("general").Execute()
+
+	if err != nil {
+		return APIMarketNewsResponse{Data: res, Error: Error{msg: err.Error(), code: "500"}}
+	}
+
+	return APIMarketNewsResponse{Data: res, Error: Error{}}
 }
