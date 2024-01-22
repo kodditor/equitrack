@@ -4,6 +4,7 @@ import { AllStocksResponse, stock } from "@/models/stocks.models"
 import { isEmpty } from "@/utils/helpers"
 import { faSearch } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import Link from "next/link"
 import { Suspense, useEffect, useState } from "react"
 
 export default function StocksList() {
@@ -52,13 +53,13 @@ export default function StocksList() {
     return (
         <>
             <div className="flex w-full justify-between items-center mb-4">
-                <h1 className='font-extrabold text-green text-6xl'>All Stocks</h1>
+                <h1 className='font-extrabold text-green text-4xl'>All Stocks</h1>
                 <span className="mr-2">
                     <FontAwesomeIcon className="absolute my-3 ml-3" icon={faSearch} />
                     <input className="text-white bg-gray-900 rounded-full p-2 pl-10" onChange={(e)=>setTitleFilter(e.target.value)}/>
                 </span>
             </div>
-            <div className="">
+            <div className=" max-h-[50vh] overflow-auto">
 
                     { isLoading && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, idx) => {
                             return(
@@ -82,7 +83,7 @@ export default function StocksList() {
 
                     { !isLoading && filteredStocks.length != 0 && filteredStocks.map((stock, idx) => {
                         return (
-                                <div className="w-full flex gap-2 p-2 items-center border-2 border-gray-700 border-b-[1px] hover:border-green duration-150" key={idx}>
+                                <Link href={`${location}stock/${stock.displaySymbol}`} className="w-full flex gap-2 p-2 items-center border-2 border-gray-700 border-b-[1px] hover:border-green duration-150" key={idx}>
                                         <span className=" w-1/12 flex flex-col items-center gap-2">
                                             <small className="rounded-full">{stock.currency}</small>
                                             <small className="rounded-full text-lg text-green font-black">{stock.displaySymbol}</small>
@@ -93,7 +94,7 @@ export default function StocksList() {
                                             <h5 className="text-gray-600 rounded-full" >{stock.type}</h5>
                                         </span>
                                         <button className=" w-2/12 rounded-full py-2 hover:bg-green hover:text-black duration-150 bg-gray-600">VIEW STOCK</button>
-                                    </div>
+                                    </Link>
                         )
                     })}
 
