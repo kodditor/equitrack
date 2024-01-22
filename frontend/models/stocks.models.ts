@@ -22,7 +22,42 @@ export interface stock {
     type: string
 }
 
+export interface stockProfile {
+    country: string,
+    currency: string,
+    exchange: string,
+    finnhubIndustry: string,
+    ipo: string,
+    logo: string,
+    marketCapitalization: number,
+    name: string,
+    phone: string,
+    shareOutstanding: number,
+    ticker: string,
+    weburl: string
+}
+
+export interface StockQuote {
+    c: number,
+    d: number,
+    dp: number,
+    h: number,
+    l: number,
+    o: number,
+    pc: number
+}
+
 
 export interface AllStocksResponse extends APIResponse {
     data: stock[]
+}
+
+export interface StockProfileResponse {
+    data: stockProfile
+    error: Error
+}
+
+export interface APIStockQuoteResponse {
+    data: StockQuote,
+    error: Error
 }
