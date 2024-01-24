@@ -100,7 +100,7 @@ export default function StocksList() {
 
                     { !isLoading && filteredStocks.length == 0 && titleFilter != "" && 
                     <>
-                        <p>No Stocks with term "{titleFilter}"</p>
+                        <p>{`No Stocks with term "${titleFilter}"`}</p>
                     </>
                     }
             

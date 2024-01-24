@@ -71,7 +71,7 @@ export default function MarketNewsList() {
                         return (
                             <a href={newsObj.url} key={idx} className="flex flex-col md:flex-row gap-4 p-4 border-2 border-gray-700 hover:border-green duration-150 border-b-transparent last:border-b-gray-700"> 
                                 <div className="w-full md:w-[150px] flex items-center justify-center overflow-hidden">
-                                    <img className=" h-full w-full object-cover" src={newsObj.image} />
+                                    <img className=" h-full w-full object-cover" alt={`${newsObj.headline} Image`} src={newsObj.image} />
                                 </div>
                                 <div className="w-full md:w-[calc(100%-30px-1rem)] p-2">
                                     <h1 className="text-green text-xl font-bold">{newsObj.headline}</h1>
@@ -87,7 +87,7 @@ export default function MarketNewsList() {
                     }
                     { !isLoading && filteredNews.length == 0 && newsFilter != "" && 
                         <>
-                            <p>No market news with term "{newsFilter}"</p>
+                            <p>{`No market news with term "${newsFilter}"`}</p>
                         </>
                     }
 

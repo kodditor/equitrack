@@ -58,7 +58,7 @@ export default function StockPage({ params }: { params: {callsign: string } }){
             console.error(err)
         })
 
-    }, [] )
+    }, [params.callsign] )
 
     function addNewStock(ticker: string){
         addStock(ticker);
@@ -90,7 +90,7 @@ export default function StockPage({ params }: { params: {callsign: string } }){
                     <section className="mb-8">
                         <div className="w-full flex flex-col gap-6 md:gap-4 items-center mb-8 justify-between">
                             <div className="w-full md:w-auto flex gap-4 md:gap-8 items-center">
-                                <img className="h-[100px] md:h-[80px]" src={stock.logo} />
+                                <img className="h-[100px] md:h-[80px]" alt={`${stock.name} Logo`} src={stock.logo} />
                                 <span >
                                     <h1 className="text-3xl md:text-6xl text-green font-black mb-1">{stock.name}</h1>
                                     <small>{stock.country} | {stock.exchange}</small>    
