@@ -169,7 +169,7 @@ func main() {
 	})
 
 	if exists {
-		router.Run("localhost:8080")
+		router.Run("0.0.0.0:8080")
 	} else {
 		println("Finnhub API Key does not exist.")
 	}
