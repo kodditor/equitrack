@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"strings"
+
 	finnhub "github.com/Finnhub-Stock-API/finnhub-go/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -52,6 +54,11 @@ type APICompanyProfileResponse struct {
 	Error Error                   `json:"error"`
 }
 
+type APIAllSpecifiedStocks struct {
+	Data  []finnhub.SymbolLookupInfo `json:"data"`
+	Error Error                      `json:"error"`
+}
+
 func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
@@ -70,8 +77,24 @@ func main() {
 	router.Use(CORSMiddleware())
 
 	router.GET("/stocks", func(c *gin.Context) {
-		res := getAllStocks(finnhubClient)
-		c.IndentedJSON(http.StatusOK, res)
+		query, hasQuery := c.GetQuery("q")
+
+		allQueries := strings.Split(query, ",")
+
+		if !hasQuery {
+			res := getAllStocks(finnhubClient)
+			c.IndentedJSON(http.StatusOK, res)
+		} else {
+			res := getAllSpecifiedStocks(finnhubClient, allQueries)
+
+			var status int
+			if (res.Error != Error{}) {
+				status = http.StatusInternalServerError
+			} else {
+				status = http.StatusOK
+			}
+			c.IndentedJSON(status, res)
+		}
 	})
 
 	router.GET("/stocks/:sign", func(c *gin.Context) {
@@ -245,4 +268,24 @@ func getMarketNews(finnhub *finnhub.APIClient) APIMarketNewsResponse {
 	}
 
 	return APIMarketNewsResponse{Data: res, Error: Error{}}
+}
+
+func getAllSpecifiedStocks(finnhub *finnhub.APIClient, queryMap []string) APIAllSpecifiedStocks {
+
+	var allResponses APIAllSpecifiedStocks
+
+	for i := 0; i < len(queryMap); i++ {
+		stock, _, err := finnhub.DefaultApi.SymbolSearch(context.Background()).Q(queryMap[i]).Execute()
+		if err != nil {
+			return APIAllSpecifiedStocks{
+				Data:  allResponses.Data,
+				Error: Error{msg: "An error occurred while retrieving the stock info", code: "001"}}
+		}
+		allResponses.Data = append(allResponses.Data, stock.GetResult()[0])
+
+	}
+	println(allResponses.Data)
+
+	return allResponses
+
 }
