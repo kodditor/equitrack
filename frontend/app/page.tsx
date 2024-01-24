@@ -10,9 +10,9 @@ export default function Home() {
 	return (
 		<>
 			<Header />
-			<main className='min-h-screen w-full px-12 pt-24 md:px-36 text-white'>
+			<main className='min-h-screen w-full px-6 pt-24 md:px-36 text-white'>
 				<section>
-					<div className='mb-8'>
+					<div className='mb-12 md:mb-8'>
 						<StocksList />
 					</div>
 					<div>
