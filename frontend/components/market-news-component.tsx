@@ -41,10 +41,10 @@ export default function MarketNewsList() {
     return (
         <>
             <div className="flex w-full justify-between items-center mb-4">
-                <h1 className='font-extrabold text-green text-4xl'>Market News</h1>
+                <h1 className='font-extrabold text-green text-3xl md:text-4xl'>Market News</h1>
                 <span className="mr-2">
                     <FontAwesomeIcon className="absolute my-3 ml-3" icon={faSearch} />
-                    <input className="text-white bg-gray-900 rounded-full p-2 pl-10" onChange={(e)=>setNewsFilter(e.target.value)}/>
+                    <input className="w-[150px] md:w-auto text-white bg-gray-900 rounded-full p-2 pl-10" onChange={(e)=>setNewsFilter(e.target.value)}/>
                 </span>
             </div>
             <div className="max-h-[50vh] overflow-auto mb-16">
@@ -69,13 +69,13 @@ export default function MarketNewsList() {
                     { !isLoading && filteredNews.map((newsObj, idx) => {
                        
                         return (
-                            <a href={newsObj.url} key={idx} className="flex gap-4 p-4 border-2 border-gray-700 hover:border-green duration-150 border-b-transparent last:border-b-gray-700"> 
-                                <div className="w-[150px] flex items-center justify-center overflow-hidden">
+                            <a href={newsObj.url} key={idx} className="flex flex-col md:flex-row gap-4 p-4 border-2 border-gray-700 hover:border-green duration-150 border-b-transparent last:border-b-gray-700"> 
+                                <div className="w-full md:w-[150px] flex items-center justify-center overflow-hidden">
                                     <img className=" h-full w-full object-cover" src={newsObj.image} />
                                 </div>
-                                <div className="w-[calc(100%-30px-1rem)] p-2">
+                                <div className="w-full md:w-[calc(100%-30px-1rem)] p-2">
                                     <h1 className="text-green text-xl font-bold">{newsObj.headline}</h1>
-                                    <p>{newsObj.summary}</p>
+                                    <p className="text-md md:text-base">{newsObj.summary}</p>
                                     <small><span className="text-green">{newsObj.source.toLocaleUpperCase()}</span> | {newsObj.category.toLocaleUpperCase()}</small>
                                     
                                 </div>
